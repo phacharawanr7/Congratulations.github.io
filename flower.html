@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>Scroll</title>
+
+<style>
+body {
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: serif;
+  transition: background 1.5s ease;
+  overflow: hidden;
+}
+
+/* แสงตามเวลา */
+.time-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  transition: background 1.5s ease;
+  z-index: 1;
+}
+
+/* หมึก */
+.ink {
+  position: absolute;
+  width: 240px;
+  height: 240px;
+  background: radial-gradient(circle, rgba(0,0,0,0.06), transparent 70%);
+  animation: drift 18s infinite alternate ease-in-out;
+  z-index: 0;
+}
+@keyframes drift {
+  from { transform: translate(-40px, -30px); }
+  to { transform: translate(40px, 30px); }
+}
+
+/* ม้วนกระดาษ */
+.scroll {
+  background: #fffaf0;
+  width: 80%;
+  max-width: 650px;
+  padding: 60px 48px;
+  box-shadow: 0 18px 60px rgba(0,0,0,0.18);
+  transform-origin: top;
+  transform: scaleY(0);
+  animation: unroll 3.2s ease forwards;
+  z-index: 2;
+}
+@keyframes unroll {
+  to { transform: scaleY(1); }
+}
+
+.content {
+  text-align: center;
+}
+
+/* ชื่อดอกไม้ */
+.flower-name {
+  font-size: 26px;
+  letter-spacing: 3px;
+  margin-bottom: 32px;
+  opacity: 0;
+  animation: fadeIn 1.4s ease forwards;
+  animation-delay: 2.4s;
+}
+
+/* บทกวี */
+.line {
+  opacity: 0;
+  font-size: 18px;
+  line-height: 2.15;
+  animation: fadeIn 1.6s ease forwards;
+}
+
+/* ภาษาจีน */
+.cn {
+  margin-top: 34px;
+  font-size: 15px;
+  opacity: 0;
+  animation: fadeIn 1.8s ease forwards;
+}
+
+/* ฝากข้อความ */
+.message {
+  margin-top: 44px;
+  border-top: 1px solid #ddd;
+  padding-top: 24px;
+}
+textarea {
+  width: 90%;
+  height: 80px;
+  border: none;
+  background: transparent;
+  resize: none;
+  outline: none;
+  font-family: serif;
+  font-size: 14px;
+}
+
+@keyframes fadeIn {
+  to { opacity: 1; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="ink"></div>
+<div class="time-overlay" id="timeOverlay"></div>
+
+<div class="scroll">
+  <div class="content">
+    <div class="flower-name" id="name"></div>
+    <div id="poem"></div>
+    <div class="cn" id="cn"></div>
+
+    <div class="message">
+      <p>ฝากบางอย่างไว้ได้ หากอยากทำ</p>
+      <textarea placeholder="ไม่จำเป็นต้องมีชื่อ"></textarea>
+    </div>
+  </div>
+</div>
+
+<audio autoplay>
+  <source src="https://assets.mixkit.co/sfx/preview/mixkit-paper-slide-1530.mp3">
+</audio>
+
+<script>
+/* 🌤️🌙 แสงตามเวลา */
+function setTimeMood() {
+  const hour = new Date().getHours();
+  const overlay = document.getElementById("timeOverlay");
+
+  if (hour >= 6 && hour < 11) {
+    overlay.style.background = "rgba(255, 244, 214, 0.35)";
+  } else if (hour >= 11 && hour < 17) {
+    overlay.style.background = "rgba(255, 255, 255, 0.15)";
+  } else if (hour >= 17 && hour < 19) {
+    overlay.style.background = "rgba(255, 220, 200, 0.35)";
+  } else {
+    overlay.style.background = "rgba(30, 40, 60, 0.38)";
+  }
+}
+setTimeMood();
+
+/* 🌸 ข้อมูลดอกไม้ */
+const data = {
+  plum: {
+    bg: "#f5f0f2",
+    name: "PLUM BLOSSOM",
+    speed: 0.65,
+    poem: [
+      "แม้ลมหนาวไม่เคยปรานี",
+      "แม้ฟ้าจะขาวโพลนไร้คำสัญญา",
+      "ดอกหนึ่งยังเลือกจะบาน",
+      "ไม่ใช่เพื่อท้าทายฤดู",
+      "ไม่ใช่เพื่อให้ใครหันมามอง",
+      "",
+      "เพียงเพื่อบอกตัวเองเบา ๆ ว่า",
+      "ในวันที่โลกแข็งกระด้าง",
+      "หัวใจนี้",
+      "ยังไม่ยอมจำนน"
+    ],
+    cn: "寒风无情，花仍自开"
+  },
+
+  orchid: {
+    bg: "#f2f4f1",
+    name: "ORCHID",
+    speed: 0.8,
+    poem: [
+      "ความงามไม่จำเป็นต้องถูกมองเห็น",
+      "กลิ่นบางเบา",
+      "ก็เพียงพอสำหรับคนที่ตั้งใจอยู่ใกล้",
+      "",
+      "บางการมีอยู่",
+      "ไม่ต้องส่งเสียง",
+      "ไม่ต้องเรียกร้อง",
+      "เพราะคนที่เข้าใจ",
+      "มักจะรับรู้",
+      "โดยไม่ต้องเอ่ยถาม"
+    ],
+    cn: "幽香不语，自有人知"
+  },
+
+  bamboo: {
+    bg: "#eef3f0",
+    name: "BAMBOO",
+    speed: 0.55,
+    poem: [
+      "ลำต้นโค้งตามแรงลม",
+      "ยอมเอน",
+      "แต่ไม่เคยหัก",
+      "",
+      "ความอ่อนโยน",
+      "ไม่ใช่การยอมแพ้",
+      "มันคือการรู้ว่า",
+      "ควรยืนตรงเมื่อใด",
+      "และควรโอนอ่อน",
+      "เพื่อรักษาตัวเองไว้"
+    ],
+    cn: "柔而不折"
+  },
+
+  chrysanthemum: {
+    bg: "#f6f3ea",
+    name: "CHRYSANTHEMUM",
+    speed: 0.9,
+    poem: [
+      "บานช้ากว่าใคร",
+      "ท่ามกลางสายตาที่เคยเร่งเร้า",
+      "ไม่เคยรีบ",
+      "ไม่เคยโทษฤดูกาล",
+      "",
+      "เพราะบางดอก",
+      "ไม่ได้เกิดมาเพื่อแข่งกับเวลา",
+      "แต่เพื่ออยู่กับมัน",
+      "จนถึงวันที่เหมาะสมจริง ๆ"
+    ],
+    cn: "迟开，却久"
+  },
+
+  lotus: {
+    bg: "#f1f6f5",
+    name: "LOTUS",
+    speed: 0.6,
+    poem: [
+      "โคลนตมไม่เคยถูกเลือก",
+      "แต่กลับเป็นที่ที่ฉันเติบโต",
+      "",
+      "ความสะอาด",
+      "ไม่ใช่การไม่เคยเปื้อน",
+      "หากคือการรู้ว่า",
+      "แม้เคยจม",
+      "ก็ยังเลือกจะลอยขึ้น",
+      "โดยไม่ทิ้งตัวตน"
+    ],
+    cn: "出淤泥而不染"
+  },
+
+  peony: {
+    bg: "#f7eef2",
+    name: "PEONY",
+    speed: 0.75,
+    poem: [
+      "ความงามที่ไม่ต้องอธิบาย",
+      "ไม่ต้องลดทอน",
+      "ไม่ต้องซ่อนตัว",
+      "",
+      "เพียงยืนอยู่ตรงนั้น",
+      "ในแบบที่เป็น",
+      "ก็เพียงพอแล้ว",
+      "บางการมีอยู่",
+      "ไม่ต้องการเหตุผลใด",
+      "มารองรับ"
+    ],
+    cn: "富而不骄"
+  },
+
+  camellia: {
+    bg: "#f4f1f3",
+    name: "CAMELLIA",
+    speed: 0.5,
+    poem: [
+      "ดอกร่วงทั้งกลีบ",
+      "ไม่แยกจากกัน",
+      "ราวกับหัวใจที่เลือกแล้ว",
+      "ว่าจะให้ทั้งหมด",
+      "โดยไม่ต่อรอง",
+      "",
+      "การจากลา",
+      "จึงไม่จำเป็นต้องแตกสลาย",
+      "หากมันเกิดขึ้น",
+      "ด้วยความตั้งใจ",
+      "ตั้งแต่ต้น"
+    ],
+    cn: "落花不散"
+  }
+};
+
+/* 🌸 แสดงผล */
+const f = new URLSearchParams(location.search).get("f");
+const flower = data[f];
+
+if (flower) {
+  document.body.style.background = flower.bg;
+  document.getElementById("name").innerText = flower.name;
+
+  const poemBox = document.getElementById("poem");
+  flower.poem.forEach((line, i) => {
+    const div = document.createElement("div");
+    div.className = "line";
+    div.style.animationDelay = `${3 + i * flower.speed}s`;
+    div.innerText = line;
+    poemBox.appendChild(div);
+  });
+
+  const cn = document.getElementById("cn");
+  cn.innerText = flower.cn;
+  cn.style.animationDelay = `${3 + flower.poem.length * flower.speed + 0.8}s`;
+}
+</script>
+
+</body>
+</html>
