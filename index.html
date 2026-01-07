@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>Choose a Flower</title>
+
+<style>
+body {
+  margin: 0;
+  height: 100vh;
+  background: #f6f2eb;
+  font-family: serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  text-align: center;
+}
+
+/* หัวข้อ */
+.title {
+  font-size: 26px;
+  letter-spacing: 2px;
+  margin-bottom: 6px;
+}
+
+.subtitle {
+  font-size: 16px;
+  opacity: 0.7;
+  margin-bottom: 40px;
+}
+
+/* กลุ่มดอกไม้ */
+.flowers {
+  display: grid;
+  grid-template-columns: repeat(2, 140px);
+  gap: 28px;
+  justify-content: center;
+}
+
+/* การ์ดดอกไม้ */
+.flower {
+  text-decoration: none;
+  color: #000;
+  transition: transform 0.4s ease, opacity 0.4s ease;
+}
+
+.flower:hover {
+  transform: translateY(-6px);
+  opacity: 0.8;
+}
+
+/* รูป */
+.flower img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 50%;
+  filter: grayscale(100%) contrast(90%) brightness(110%);
+}
+
+/* ชื่อ */
+.name {
+  margin-top: 10px;
+  font-size: 14px;
+  letter-spacing: 1px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <div class="title">เลือกดอกไม้หนึ่งดอก</div>
+  <div class="subtitle">（择一花）</div>
+
+  <div class="flowers">
+
+    <a class="flower" href="flower.html?f=plum">
+      <img src="f8febe410592b322eafa9f536628b20a.jpg" alt="Plum">
+      <div class="name">PLUM BLOSSOM</div>
+    </a>
+
+    <a class="flower" href="flower.html?f=orchid">
+      <img src="c48bacdd36867c2db587450d056defd7.jpg" alt="Orchid">
+      <div class="name">CHRYSANTHEMUM</div>
+    </a>
+
+    <a class="flower" href="flower.html?f=bamboo">
+      <img src="97533a0127eb256057f79b654585ed5e.jpg" alt="Bamboo">
+      <div class="name">PEONY</div>
+    </a>
+
+    <a class="flower" href="flower.html?f=chrysanthemum">
+      <img src="45dc391d822bd34a60c35b626ffe8c6d.jpg" alt="Chrysanthemum">
+      <div class="name">ORCHID</div>
+    </a>
+
+    <a class="flower" href="flower.html?f=lotus">
+      <img src="6f120710820e1b04e88a0255baa18f7f.jpg" alt="Lotus">
+      <div class="name">SUNFLOWER</div>
+    </a>
+
+    <a class="flower" href="flower.html?f=peony">
+      <img src="fc1b0f26fb9e0a6a47b452fe7292f498.jpg" alt="Peony">
+      <div class="name">TULIP</div>
+    </a>
+
+    <a class="flower" href="flower.html?f=camellia">
+      <img src="6ef00b4833a6963365307ecea90e141d.jpg" alt="Camellia">
+      <div class="name">CHERRY BLOSSOM</div>
+    </a>
+
+  </div>
+</div>
+
+</body>
+<ORCHID
